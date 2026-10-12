@@ -11,12 +11,20 @@ def create_pipeline(feature_cols: list[str]) -> Pipeline:
     """Создает и возвращает настроенный пайплайн XGBoost."""
     settings = get_settings()
 
-    # Циклические признаки не нужно масштабировать, они уже в диапазоне [-1, 1]
-    cyclic_cols = ["weekday_sin", "weekday_cos", "month_sin", "month_cos"]
+    # Все возможные циклические признаки
+    all_cyclic_cols = ["weekday_sin", "weekday_cos", "month_sin", "month_cos"]
+
+    # Оставляем только те, которые реально есть в переданных признаках
+    cyclic_cols = [c for c in all_cyclic_cols if c in feature_cols]
     numeric_cols = [c for c in feature_cols if c not in cyclic_cols]
 
+    # Формируем список трансформеров динамически
+    transformers = [("num", StandardScaler(), numeric_cols)]
+    if cyclic_cols:
+        transformers.append(("cyc", "passthrough", cyclic_cols))
+
     preprocessor = ColumnTransformer(
-        transformers=[("num", StandardScaler(), numeric_cols), ("cyc", "passthrough", cyclic_cols)],
+        transformers=transformers,
         remainder="drop",  # Игнорируем колонки 'date' и 'target', если они попадут в X
     )
 

@@ -6,7 +6,7 @@ from pathlib import Path
 
 import yaml
 from pydantic import BaseModel, Field
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class DataConfig(BaseModel):
@@ -73,15 +73,13 @@ class DriftConfig(BaseModel):
 class Settings(BaseSettings):  # type: ignore[misc]
     """Основные настройки проекта."""
 
+    model_config = SettingsConfigDict(env_file=".env")
+
     data: DataConfig
     features: FeaturesConfig
     models: ModelsConfig
     training: TrainingConfig
     drift: DriftConfig
-    # business: BusinessConfig  # ← закомментируйте или удалите эту строку
-
-    class Config:
-        env_file = ".env"
 
 
 def load_config(config_path: str | Path = "configs/config.yaml") -> Settings:
