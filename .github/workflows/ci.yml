@@ -55,7 +55,7 @@ jobs:
   security:
     name: Security checks
     runs-on: ubuntu-latest
-    continue-on-error: true  # ← добавить эту строку
+    continue-on-error: true
 
     steps:
       - name: Checkout code
