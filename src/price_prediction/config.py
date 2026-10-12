@@ -72,6 +72,7 @@ class DriftConfig(BaseModel):
 
 class Settings(BaseSettings):  # type: ignore[misc]
     """Основные настройки проекта."""
+
     data: DataConfig
     features: FeaturesConfig
     models: ModelsConfig
